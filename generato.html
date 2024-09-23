@@ -72,7 +72,16 @@ textarea sets a fixed height for the output text box.
     </style>
     <link rel="stylesheet" href="./navbar.css">
     </head>
-    <div class="navbar" id="navbar"></div>
+    <div class="navbar" id="navbar">
+            <nav>
+                <ul>
+                    <li><a href="./calculator.html">Calculator</a> </li>
+                    <li><a href="./todo.html">To-Do List</a> </li>
+                    <li><a href="./drum.html">Drum</a> </li>
+                    <li><a href="./generato.html">Story Generator</a> </li>
+                </ul>
+            </nav>
+    </div>
 <body>
     <!-- Container for the entire generator interface -->
     <div class="container">
@@ -110,11 +119,11 @@ The second <div class="input-group"> allows users to enter a keyword to filter s
 The <button> element triggers the text generation.
 The <textarea> is used to display the output. It is set to readonly to prevent editing.-->
     <script>
-                fetch('navbar.html')
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('navbar').innerHTML = data;
-                        });
+                // fetch('navbar.html')
+                //         .then(response => response.text())
+                //         .then(data => {
+                //             document.getElementById('navbar').innerHTML = data;
+                //         });
         // Sample story used for generating text
         const story = "Once upon a time, in a land far away, there was a small village surrounded by majestic mountains. The villagers lived peacefully, farming their land and tending to their animals. One day, a traveler arrived with tales of a hidden treasure buried deep in the mountains. The villagers were curious but also cautious, as the mountains were known to be home to many dangers. Despite the risks, a brave group of villagers set out to find the treasure. They faced many challenges along the way, but their determination kept them going. Finally, after many days of searching, they found the treasure hidden in a cave. The villagers returned home as heroes, and the village prospered for many years to come.";
 //This variable story contains a predefined sample story used as the source for text generation

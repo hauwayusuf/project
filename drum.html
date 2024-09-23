@@ -108,7 +108,16 @@
     </style>
 </head>
 <body>
-    <div class="navbar" id="navbar"></div>
+    <div class="navbar" id="navbar">
+            <nav>
+                <ul>
+                    <li><a href="./calculator.html">Calculator</a> </li>
+                    <li><a href="./todo.html">To-Do List</a> </li>
+                    <li><a href="./drum.html">Drum</a> </li>
+                    <li><a href="./generato.html">Story Generator</a> </li>
+                </ul>
+            </nav>
+    </div>
     <div class="container"> <!-- Container for drum pads and controls -->
         <div class="drum-pads"> <!-- Drum pads grid -->
             <div class="drum-pad" id="Q" data-sound="Heater 1">Q</div>
@@ -158,11 +167,11 @@
     <audio id="Snare" src="sounds/Snare.mp3"></audio> <!-- Audio element for Snare sound -->
 
     <script>
-                fetch('navbar.html')
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('navbar').innerHTML = data;
-                        });
+                // fetch('navbar.html')
+                //         .then(response => response.text())
+                //         .then(data => {
+                //             document.getElementById('navbar').innerHTML = data;
+                //         });
         const powerButton = document.getElementById('power'); // Reference to the power checkbox
         const bankButton = document.getElementById('bank'); // Reference to the bank checkbox
         const display = document.getElementById('display'); // Reference to the display element
