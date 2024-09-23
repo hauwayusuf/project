@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drum Machine</title>
+    <link rel="stylesheet" href="./navbar.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Sets the font for the body */
+            background-color: #8ECAE6; /* Background color for the body */
+            color: #023047; /* Text color */
+            display: flex; /* Enables flexbox layout */
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; /* Centers content vertically */
+            height: 100vh; /* Sets the height to full viewport height */
+            margin: 0; /* Removes default margin */
+        }
+
+        .container {
+            display: flex; /* Enables flexbox for the container */
+        }
+
+        .drum-pads {
+            display: grid; /* Enables grid layout for drum pads */
+            grid-template-columns: repeat(3, 100px); /* 3 columns, each 100px wide */
+            grid-gap: 10px; /* 10px space between grid items */
+            margin-right: 30px; /* 30px margin to the right of the drum pads */
+        }
+
+        .drum-pad {
+            width: 100px; /* Width of each drum pad */
+            height: 100px; /* Height of each drum pad */
+            background-color: #FB8500; /* Background color of each drum pad */
+            display: flex; /* Enables flexbox for the drum pad */
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; /* Centers content vertically */
+            font-size: 20px; /* Font size of the text inside drum pads */
+            color: white; /* Text color */
+            cursor: pointer; /* Changes cursor to pointer on hover */
+            user-select: none; /* Prevents text selection */
+            border-radius: 10px; /* Rounds the corners of the drum pads */
+        }
+
+        .controls {
+            display: flex; /* Enables flexbox for controls */
+            flex-direction: column; /* Arranges controls in a column */
+            align-items: center; /* Centers controls horizontally */
+        }
+
+        .control {
+            margin: 10px 0; /* 10px margin above and below each control */
+        }
+
+        #power, #bank {
+            appearance: none; /* Removes default styling of checkboxes */
+            width: 60px; /* Width of the switch */
+            height: 30px; /* Height of the switch */
+            background-color: #219EBC; /* Background color of the switch */
+            border-radius: 15px; /* Rounds the corners of the switch */
+            position: relative; /* Allows absolute positioning of the switch handle */
+            cursor: pointer; /* Changes cursor to pointer on hover */
+            outline: none; /* Removes outline when focused */
+        }
+
+        #power:checked::before, #bank:checked::before {
+            content: ''; /* Empty content for the switch handle */
+            position: absolute; /* Positions the handle relative to the switch */
+            left: 30px; /* Positions the handle on the right when checked */
+            top: 3px; /* Positions the handle slightly from the top */
+            width: 24px; /* Width of the handle */
+            height: 24px; /* Height of the handle */
+            background-color: #023047; /* Background color of the handle */
+            border-radius: 50%; /* Makes the handle circular */
+            transition: 0.2s; /* Smooth transition for the handle movement */
+        }
+
+        #power::before, #bank::before {
+            content: ''; /* Empty content for the switch handle */
+            position: absolute; /* Positions the handle relative to the switch */
+            left: 3px; /* Positions the handle on the left when unchecked */
+            top: 3px; /* Positions the handle slightly from the top */
+            width: 24px; /* Width of the handle */
+            height: 24px; /* Height of the handle */
+            background-color: white; /* Background color of the handle */
+            border-radius: 50%; /* Makes the handle circular */
+            transition: 0.2s; /* Smooth transition for the handle movement */
+        }
+
+        #display {
+            width: 200px; /* Width of the display */
+            height: 50px; /* Height of the display */
+            background-color: #219EBC; /* Background color of the display */
+            color: white; /* Text color */
+            display: flex; /* Enables flexbox for the display */
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; /* Centers content vertically */
+            border-radius: 10px; /* Rounds the corners of the display */
+        }
+
+        #volume {
+            width: 150px; /* Width of the volume slider */
+        }
+
+        #volume::after {
+            content: ''; /* Empty content for custom styling (not used) */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar" id="navbar"></div>
+    <div class="container"> <!-- Container for drum pads and controls -->
+        <div class="drum-pads"> <!-- Drum pads grid -->
+            <div class="drum-pad" id="Q" data-sound="Heater 1">Q</div>
+            <div class="drum-pad" id="W" data-sound="Heater 2">W</div>
+            <div class="drum-pad" id="E" data-sound="Heater 3">E</div>
+            <div class="drum-pad" id="A" data-sound="Heater 4">A</div>
+            <div class="drum-pad" id="S" data-sound="Clap">S</div>
+            <div class="drum-pad" id="D" data-sound="Open HH">D</div>
+            <div class="drum-pad" id="Z" data-sound="Kick n'Hat">Z</div>
+            <div class="drum-pad" id="X" data-sound="Kick">X</div>
+            <div class="drum-pad" id="C" data-sound="Closed HH">C</div>
+        </div>
+        <div class="controls"> <!-- Control panel for power, display, volume, and bank -->
+            <div class="control"> <!-- Power switch -->
+                <label for="power">Power</label>
+                <input type="checkbox" id="power"> <!-- Power checkbox -->
+            </div>
+            <div id="display" class="control">--</div> <!-- Display area -->
+            <div class="control"> <!-- Volume slider -->
+                <label for="volume">Volume</label>
+                <input type="range" id="volume" min="0" max="100"> <!-- Volume range input -->
+            </div>
+            <div class="control"> <!-- Bank switch -->
+                <label for="bank">Bank</label>
+                <input type="checkbox" id="bank"> <!-- Bank checkbox -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Adding the audio elements -->
+    <audio id="Heater-1" src="sounds/Heater-1.mp3"></audio> <!-- Audio element for Heater-1 sound -->
+    <audio id="Heater-2" src="sounds/Heater-2.mp3"></audio> <!-- Audio element for Heater-2 sound -->
+    <audio id="Heater-3" src="sounds/Heater-3.mp3"></audio> <!-- Audio element for Heater-3 sound -->
+    <audio id="Heater-4" src="sounds/Heater-4.mp3"></audio> <!-- Audio element for Heater-4 sound -->
+    <audio id="Clap" src="sounds/Clap.mp3"></audio> <!-- Audio element for Clap sound -->
+    <audio id="Open-HH" src="sounds/Open-HH.mp3"></audio> <!-- Audio element for Open-HH sound -->
+    <audio id="Kick-n-Hat" src="sounds/Kick-n-Hat.mp3"></audio> <!-- Audio element for Kick-n-Hat sound -->
+    <audio id="Kick" src="sounds/Kick.mp3"></audio> <!-- Audio element for Kick sound -->
+    <audio id="Closed-HH" src="sounds/Closed-HH.mp3"></audio> <!-- Audio element for Closed-HH sound -->
+
+    <audio id="Chord-1" src="sounds/Chord-1.mp3"></audio> <!-- Audio element for Chord-1 sound -->
+    <audio id="Chord-2" src="sounds/Chord-2.mp3"></audio> <!-- Audio element for Chord-2 sound -->
+    <audio id="Chord-3" src="sounds/Chord-3.mp3"></audio> <!-- Audio element for Chord-3 sound -->
+    <audio id="Shaker" src="sounds/Shaker.mp3"></audio> <!-- Audio element for Shaker sound -->
+    <audio id="Punchy-Kick" src="sounds/Punchy-Kick.mp3"></audio> <!-- Audio element for Punchy-Kick sound -->
+    <audio id="Side-Stick" src="sounds/Side-Stick.mp3"></audio> <!-- Audio element for Side-Stick sound -->
+    <audio id="Snare" src="sounds/Snare.mp3"></audio> <!-- Audio element for Snare sound -->
+
+    <script>
+                fetch('navbar.html')
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('navbar').innerHTML = data;
+                        });
+        const powerButton = document.getElementById('power'); // Reference to the power checkbox
+        const bankButton = document.getElementById('bank'); // Reference to the bank checkbox
+        const display = document.getElementById('display'); // Reference to the display element
+        const volumeSlider = document.getElementById('volume'); // Reference to the volume slider
+        const drumPads = document.querySelectorAll('.drum-pad'); // Reference to all drum pad elements
+
+        let currentBank = { // Object to hold the current set of sounds (bank one by default)
+            Q: 'Heater-1',
+            W: 'Heater-2',
+            E: 'Heater-3',
+            A: 'Heater-4',
+            S: 'Clap',
+            D: 'Open-HH',
+            Z: 'Kick-n-Hat',
+            X: 'Kick',
+            C: 'Closed-HH'
+        };
+
+        const bankOne = { // Object representing the first bank of sounds
+            Q: 'Heater-1',
+            W: 'Heater-2',
+            E: 'Heater-3',
+            A: 'Heater-4',
+            S: 'Clap',
+            D: 'Open-HH',
+            Z: 'Kick-n-Hat',
+            X: 'Kick',
+            C: 'Closed-HH'
+        };
+
+        const bankTwo = { // Object representing the second bank of sounds
+            Q: 'Chord-1',
+            W: 'Chord-2',
+            E: 'Chord-3',
+            A: 'Shaker',
+            S: 'Open-HH',
+            D: 'Closed-HH',
+            Z: 'Punchy-Kick',
+            X: 'Side-Stick',
+            C: 'Snare'
+        };
+
+        powerButton.addEventListener('change', () => { // Event listener for power toggle
+            if (powerButton.checked) { // If power is on
+                display.textContent = 'ON'; // Display "ON"
+            } else {
+                display.textContent = '--'; // Display "--" when off
+            }
+        });
+
+        bankButton.addEventListener('change', () => { // Event listener for bank toggle
+            if (bankButton.checked) { // If bank is switched on
+                currentBank = bankTwo; // Switch to bank two
+            } else {
+                currentBank = bankOne; // Switch to bank one
+            }
+            updateSounds(); // Update drum pads with new sounds
+        });
+
+        drumPads.forEach(pad => { // Loop through each drum pad
+            pad.addEventListener('click', () => { // Add click event listener
+                if (powerButton.checked) { // If power is on
+                    const soundId = currentBank[pad.id]; // Get the sound ID from the current bank
+                    display.textContent = soundId.replace(/-/g, ' '); // Display sound name
+                    playSound(soundId); // Play the sound
+                }
+            });
+        });
+
+        volumeSlider.addEventListener('input', () => { // Event listener for volume change
+            if (powerButton.checked) { // If power is on
+                display.textContent = `Volume: ${volumeSlider.value}`; // Display the current volume level
+                updateVolume(volumeSlider.value); // Update volume for all sounds
+            }
+        });
+
+        function playSound(id) { // Function to play a sound
+            const audioElement = document.getElementById(id); // Get the audio element by ID
+            audioElement.currentTime = 0; // Reset playback to the start
+            audioElement.play(); // Play the sound
+        }
+
+        function updateSounds() { // Function to update sounds for all drum pads
+            drumPads.forEach(pad => {
+                pad.setAttribute('data-sound', currentBank[pad.id]); // Update the data-sound attribute
+            });
+        }
+
+        function updateVolume(volume) { // Function to update the volume for all sounds
+            const audios = document.querySelectorAll('audio'); // Get all audio elements
+            audios.forEach(audio => {
+                audio.volume = volume / 100; // Set the volume based on slider value
+            });
+        }
+    </script>
+</body>
+</html>

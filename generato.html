@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Generator</title>
+    <style>
+        /* Styling the body of the page */
+        body {
+            font-family: Arial, sans-serif; /* Sets the font style for the entire page */
+            background-color: #8ECAE6; /* Light blue background color */
+            color: #023047; /* Dark blue text color */
+            display: flex; /* Uses flexbox to center the content */
+            justify-content: center; /* Centers the content horizontally */
+            align-items: center; /* Centers the content vertically */
+            height: 100vh; /* Full viewport height */
+            margin: 0; /* Removes default margin */
+        }
+        
+        /* Styling the container */
+        .container {
+            background-color: #219EBC; /* Blue background for the container */
+            padding: 20px; /* Padding inside the container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+            text-align: center; /* Centers text inside the container */
+            width: 80%; /* Container width */
+            max-width: 400px; /* Maximum width for responsiveness */
+        }
+        
+        /* Styling for each input group */
+        .input-group {
+            margin: 10px 0; /* Margin between input groups */
+        }
+        
+        /* Styling input, select, and button elements */
+        input, select, button, textarea {
+            padding: 8px; /* Inner space around the text */
+            margin: 5px; /* Space around elements */
+            border: 1px solid #023047; /* Border color */
+            border-radius: 4px; /* Rounded corners */
+            width: 80%; /* Width of input fields */
+            max-width: 300px; /* Maximum width */
+        }
+        
+        /* Additional styling for the button */
+        button {
+            background-color: #2600fb; /* Orange color for the button */
+            color: white; /* White text color */
+            cursor: pointer; /* Changes cursor to pointer on hover */
+            width: 85%; /* Button width */
+            max-width: 320px; /* Maximum width */
+        }
+        
+        /* Styling the button when hovered */
+        button:hover {
+            background-color: #023047; /* Darker color on hover */
+        }
+
+        /* Styling the textarea specifically */
+        textarea {
+            height: 100px; /* Height of the text area */
+        }
+        /*The body styles set up a clean and centered layout using Flexbox, with a light blue background.
+.container defines the styling for the main content box, including its background color, padding, rounded corners,
+ shadow, and text alignment.
+.input-group provides spacing around input elements.
+Styles for input, select, button, and textarea ensure consistent spacing, border, and width settings.
+button:hover changes the button color when hovered over to provide visual feedback.
+textarea sets a fixed height for the output text box.
+*/
+    </style>
+    <link rel="stylesheet" href="./navbar.css">
+    </head>
+    <div class="navbar" id="navbar"></div>
+<body>
+    <!-- Container for the entire generator interface -->
+    <div class="container">
+        <h1>Story Generator</h1> <!-- Title of the generator -->
+        
+        <!-- Input group for specifying the number and type of text -->
+        <div class="input-group">
+            <label for="quantity">I need </label>
+            <input type="number" id="quantity" min="1" value="1"> <!-- Number input for quantity -->
+            <label for="type"> of your </label>
+            <select id="type"> <!-- Dropdown to select words, sentences, or paragraphs -->
+                <option value="words">words</option>
+                <option value="sentences">sentences</option>
+                <option value="paragraphs">paragraphs</option>
+            </select>
+        </div>
+
+        <!-- Input group for keyword filtering -->
+        <div class="input-group">
+            <label for="keyword">I need a sentence with </label>
+            <input type="text" id="keyword" placeholder="Enter a keyword"> <!-- Text input for keyword -->
+        </div>
+
+        <!-- Button to generate text -->
+        <button id="generateButton">Generate</button>
+
+        <!-- Textarea to display the generated output -->
+        <textarea id="output" readonly></textarea> <!-- Read-only to prevent editing -->
+    </div>
+<!--The <div class="container"> acts as a wrapper to apply styling and layout.
+The <h1> tag is used for the main heading, "Story Generator".
+The first <div class="input-group"> contains inputs for specifying how much text the user wants: 
+a number (<input type="number">) and a type selection (<select> with options for words, sentences, or paragraphs).
+The second <div class="input-group"> allows users to enter a keyword to filter sentences.
+The <button> element triggers the text generation.
+The <textarea> is used to display the output. It is set to readonly to prevent editing.-->
+    <script>
+                fetch('navbar.html')
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('navbar').innerHTML = data;
+                        });
+        // Sample story used for generating text
+        const story = "Once upon a time, in a land far away, there was a small village surrounded by majestic mountains. The villagers lived peacefully, farming their land and tending to their animals. One day, a traveler arrived with tales of a hidden treasure buried deep in the mountains. The villagers were curious but also cautious, as the mountains were known to be home to many dangers. Despite the risks, a brave group of villagers set out to find the treasure. They faced many challenges along the way, but their determination kept them going. Finally, after many days of searching, they found the treasure hidden in a cave. The villagers returned home as heroes, and the village prospered for many years to come.";
+//This variable story contains a predefined sample story used as the source for text generation
+        // Add event listener to the generate button
+        document.getElementById('generateButton').addEventListener('click', function() {
+            const quantity = document.getElementById('quantity').value; // Get the quantity from input
+            const type = document.getElementById('type').value; // Get the selected type (words, sentences, paragraphs)
+            const keyword = document.getElementById('keyword').value; // Get the keyword if provided
+            let output = ''; // Initialize output variable
+
+            const words = story.split(' '); // Split story into words
+            const sentences = story.match(/[^\.!\?]+[\.!\?]+/g); // Split story into sentences
+            const paragraphs = story.split('\n'); // Split story into paragraphs (for now, same as the whole story)
+
+            // Check if a keyword is provided
+            if (keyword) {
+                const keywordSentences = sentences.filter(sentence => sentence.includes(keyword)); 
+                // Find sentences with keyword
+                if (keywordSentences.length > 0) {
+                    output = keywordSentences.join(' '); // Use all matching sentences
+                } else {
+                    output = `No sentences found with the word "${keyword}".`; // Message if no match
+                }
+            } else {
+                // Generate output based on type and quantity
+                if (type === 'words') {
+                    output = words.slice(0, quantity).join(' '); // Join specified number of words
+                    output += ` (${quantity} words)`; // Append count information
+                } else if (type === 'sentences') {
+                    output = sentences.slice(0, quantity).join(' '); // Join specified number of sentences
+                    output += ` (${quantity} sentences)`; // Append count information
+                } else if (type === 'paragraphs') {
+                    output = paragraphs.slice(0, quantity).join('\n\n'); // Join specified number of paragraphs
+                    output += ` (${quantity} paragraphs)`; // Append count information
+                }
+            }
+
+            // Display the generated text in the textarea
+            document.getElementById('output').textContent = output;
+        })
+        //Getting Input Values: The quantity, type, and keyword variables store the values entered by the user.
+//Splitting the Story: The story is split into arrays of words, sentences, and paragraphs for easier manipulation.
+//Keyword Filtering: If a keyword is provided, it filters the sentences to only include those containing the keyword.
+//Generating Text: Based on the type and quantity specified by the user, the script selects and formats the desired amount of text (words, sentences, or paragraphs).
+//Displaying Output: The generated text is displayed in the <textarea> by setting its textContent.
+    </script>
+</body>
+</html>

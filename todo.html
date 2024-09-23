@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./navbar.css"><link rel="stylesheet" href="./navbar.css">
+    <title>To-Do List App</title>
+    <style>
+        /* Basic page styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: pink;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Container for the to-do list */
+        .container {
+            width: 400px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Title */
+        h1 {
+            text-align: center;
+        }
+
+        /* Input field for new tasks */
+        input[type="text"],
+        input[type="date"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons */
+        button {
+            padding: 10px;
+            background-color: rosybrown;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background-color: DARK pink;
+        }
+
+        /* List of tasks */
+        #task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Style each task */
+        #task-list li {
+            padding: 10px;
+            background-color: palevioletred;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        
+        /* Hide bulk delete options initially */
+        /*The .hidden class is used to hide elements, such as the bulk delete and cancel buttons, until they are needed.*/
+        .hidden {
+            display: none;
+        }
+
+        /* Style for individual delete button */
+        .delete-btn {
+            background-color: plum;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Edit button styling */
+        .edit-btn {
+            background-color: purple;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar" id="navbar"></div>
+    <div class="container">
+        <h1>To-Do List</h1>
+
+        <!-- Input for new tasks -->
+        <input type="text" id="new-task" placeholder="Add a new task..." />
+        
+        <!-- Input for task due dates -->
+<!-- Input for task due dates with 'required' attribute -->
+<input type="date" id="due-date" placeholder="Set due date" required />
+
+        <!-- Add Task button -->
+        <button id="add-task-btn">Add Task</button>
+
+        <!-- List to display tasks -->
+        <ul id="task-list"></ul>
+
+        <!-- Bulk delete and cancel options, initially hidden -->
+        <div id="delete-options" class="hidden">
+            <button id="delete-selected-btn">Delete Selected</button>
+            <button id="cancel-btn">Cancel</button>
+        </div>
+
+        
+    </div>
+
+    <script>
+                fetch('navbar.html')
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('navbar').innerHTML = data;
+                        });
+        // Get DOM elements
+        //Here, the necessary DOM elements (task input, due date input, buttons, and task list) are
+        // retrieved using document.getElementById().
+        const taskInput = document.getElementById('new-task');  // Task input field
+        const dueDateInput = document.getElementById('due-date');  // Due date input field
+        const addTaskBtn = document.getElementById('add-task-btn');  // Add Task button
+        const taskList = document.getElementById('task-list');  // Task list container
+        const deleteOptions = document.getElementById('delete-options');  // Bulk delete/cancel buttons
+        const deleteSelectedBtn = document.getElementById('delete-selected-btn');  // Bulk delete button
+        const cancelBtn = document.getElementById('cancel-btn');  // Cancel selection button
+
+        let tasks = [];  // Array to store task objects (each task with its due date and completion status
+        let selectedTasks = new Set();  // Set to store indexes of selected tasks
+
+        // Add task functionality
+        addTaskBtn.addEventListener('click', () => {
+            const task = taskInput.value.trim();  // Get the task input value
+            const dueDate = dueDateInput.value;  // Get the due date value
+            if (task) {
+                tasks.push({ task, dueDate, completed: false });  // Push new task object into tasks array
+                renderTasks();  // Re-render the tasks
+                taskInput.value = '';  // Clear input field
+                dueDateInput.value = '';  // Clear due date field
+            }
+        });
+        //The task input is retrieved and trimmed of excess whitespace.
+//If the task is not empty, a new task object is added to the tasks array with its due date and an incomplete status (completed: false).
+//The renderTasks() function is called to refresh the task list display.
+//The input fields are cleared.
+
+        // Render tasks on the page
+        function renderTasks() {
+    taskList.innerHTML = '';  // Clear the current list
+
+    tasks.forEach((taskObj, index) => {
+        const li = document.createElement('li');  // Create a list item for each task
+        const taskText = document.createElement('span');  // Create a span for the task text
+        const dueDateText = document.createElement('span');  // Create a span for the due date
+        
+        taskText.textContent = taskObj.task;  // Set task text
+        dueDateText.textContent = taskObj.dueDate ? `Due: ${taskObj.dueDate}` : '';  // Set due date if available
+
+        // Apply completed style if the task is completed
+        if (taskObj.completed) {
+            li.classList.add('completed');  // Add 'completed' class to strike-through the text and gray out
+        }
+
+        // Checkbox to mark task as complete/incomplete
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';  // Set input type to checkbox
+        checkbox.checked = taskObj.completed;  // Set checkbox state based on task completion
+        checkbox.addEventListener('change', () => toggleCompleteTask(index));  // Mark task as complete/incomplete when checkbox is clicked
+        
+        // Edit button to edit the task
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.classList.add('edit-btn');
+        editBtn.addEventListener('click', () => editTask(index));  // Trigger edit functionality
+
+        // Delete button for single task deletion
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('delete-btn');
+        deleteBtn.addEventListener('click', () => deleteSingleTask(index));  // Trigger single task deletion
+
+        // Append the task text, due date, edit button, and delete button to the list item
+        li.appendChild(checkbox);
+        li.appendChild(taskText);
+        li.appendChild(dueDateText);
+        li.appendChild(editBtn);
+        li.appendChild(deleteBtn);
+
+        // Highlight selected tasks for bulk deletion
+        li.addEventListener('click', () => selectTask(index));
+
+        // Add the list item to the task list
+        taskList.appendChild(li);
+    });
+
+    // Show delete options if tasks are selected
+    if (selectedTasks.size > 0) {
+        deleteOptions.classList.remove('hidden');
+    } else {
+        deleteOptions.classList.add('hidden');
+    }
+}
+
+        //The renderTasks() function clears the current list and repopulates it with tasks. Each task is rendered as a list item 
+
+        // Toggle task completion
+        function toggleCompleteTask(index) {
+            tasks[index].completed = !tasks[index].completed;  // Toggle the completed state
+            renderTasks();  // Re-render tasks to update styles
+        }
+
+        // Edit a task
+        function editTask(index) {
+            const newTask = prompt('Edit task:', tasks[index].task);  //his prompts the user to enter new text for the task. The current task text is shown as the default in the prompt dialog.
+            if (newTask !== null && newTask.trim()) {
+                tasks[index].task = newTask.trim();  // Update the task text
+                renderTasks();  // Re-render tasks to reflect the change
+            }
+        }
+
+        // Select or deselect a task for bulk deletion
+        // If the task at the specified index is already selected (stored in the selectedTasks set), this line removes it from the set, thus deselecting it.
+//else { selectedTasks.add(index); }: If the task is not already selected, this line adds the task to the selectedTasks set.
+//renderTasks();: Re-renders the task list to visually show the selected state and ensure the task selection is reflected.
+        function selectTask(index) {
+            if (selectedTasks.has(index)) {
+                selectedTasks.delete(index);  // Deselect task
+            } else {
+                selectedTasks.add(index);  // Select task
+            }
+            renderTasks();  // Update task list
+        }
+
+        // Delete a single task
+        function deleteSingleTask(index) {
+            tasks.splice(index, 1);  // Filters the tasks array, keeping only those tasks whose indices are not in the selectedTasks set. In other words, it removes all tasks that were selected.
+            selectedTasks.clear();  // Clear selected tasks
+            renderTasks();  // Re-render the task list
+        }
+
+        // Delete all selected tasks
+        deleteSelectedBtn.addEventListener('click', () => {
+            tasks = tasks.filter((_, index) => !selectedTasks.has(index));  // Remove selected tasks
+            selectedTasks.clear();  // Clear selected tasks set
+            renderTasks();  // Re-render the task list
+        });
+
+        // Cancel the selection of tasks
+        cancelBtn.addEventListener('click', () => {
+            selectedTasks.clear();  // Clear selected tasks set
+            renderTasks();  // Re-render the task list
+        });
+
+        // Clear all tasks
+        //This line empties the tasks array, effectively removing all tasks from the list.
+        clearAllBtn.addEventListener('click', () => {
+            tasks = [];  // Re-renders the task list, which will now be empty since all tasks have been deleted.
+
+        });
+        
+        </script>
+
+</body> 
+
+</html> 
